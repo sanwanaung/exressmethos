@@ -39,14 +39,6 @@ let users = [
 app.use(express.static("public"));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.send("hi");
-});
-
-app.get("/users", (req, res) => {
-  res.send(users);
-});
-
 app.post("/users", (req, res) => {
   // console.log(req.body);
   const newUser = req.body;
