@@ -1,30 +1,3 @@
-// const url = "http://localhost:3000/users";
-
-// const createUser = async () => {
-//   const newUser = {
-//     name: "Jenny's Fav Boi",
-//     email: "jennyfavboi@gmail.com",
-//     age: 24,
-//   };
-//   const response = await fetch(url, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify(newUser),
-//   });
-// };
-
-// createUser();
-
-// const fetchUsers = async () => {
-//   const response = await fetch(url);
-//   const data = await response.json();
-//   console.log(data);
-// };
-
-// fetchUsers();
-
-// Trying Again
-
 const url = "http://localhost:3000/users";
 const app = document.querySelector(".app");
 const regitsteBtn = document.querySelector(".register-btn");
@@ -86,6 +59,7 @@ regitsteBtn.addEventListener("click", async () => {
 // Deleting User
 const deleteUser = async (event) => {
   const userId = event.target.id;
+  const url = `http://localhost:3000/users/${userId}`;
   const newUserId = { id: userId };
   const response = await fetch(url, {
     method: "DELETE",
@@ -93,8 +67,14 @@ const deleteUser = async (event) => {
     body: JSON.stringify(newUserId),
   });
   const data = await response.json();
-  app.innerHTML = "";
-  updateUser(data);
+
+  console.log(data);
+  if (data.message) {
+    alert("Error Occur", data.message);
+  } else {
+    app.innerHTML = "";
+    updateUser(data);
+  }
 };
 
 // Update Btn
@@ -115,7 +95,7 @@ const updateUserInfo = async (event) => {
     name: userName,
     email: userEmail,
     age: userAge,
-    id: Number.parseInt(count),
+    id: count,
   };
   const response = await fetch(url, {
     method: "PUT",
@@ -130,10 +110,11 @@ const updateUserInfo = async (event) => {
   updateUser(data);
 };
 
-// Data Fetchin From Server
+// Data Fetching From Server
 const fetchUser = async () => {
   const response = await fetch(url);
   const data = await response.json();
+  console.log(data);
   updateUser(data);
 };
 fetchUser();

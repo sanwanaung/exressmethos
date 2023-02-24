@@ -1,64 +1,44 @@
-// const express = require("express");
-// const app = express();
-// const port = 3000;
-
-// app.use(express.static("public"));
-// app.use(express.json());
-
-// const users = [
-//   { name: "Rose's Fav Boi", email: "rosefavboi@gmail.com", age: 22 },
-//   { name: "Lisa's Fav Boi", email: "lisafavboi@gmail.com", age: 23 },
-// ];
-
-// app.get("/users", (req, res) => {
-//   res.send(users);
-// });
-
-// app.post("/users", (req, res) => {
-//   console.log(req.body);
-//   const newUser = req.body;
-//   users.push(newUser);
-//   res.send(users);
-// });
-
-// app.listen(port, () => {
-//   console.log(`Server Started: Listenning on port ${port}`);
-// });
-
-// Trying Again
-
 const express = require("express");
 const app = express();
 const port = 3000;
-
-let users = [
-  { name: "Rose's Fav Boi", email: "rosefavboi", age: 22, id: 1 },
-  { name: "Jenny's Fav Boi", email: "jennyfavboi", age: 23, id: 2 },
-];
+const uuid = require("uuid");
+console.log(uuid.v4());
 
 app.use(express.static("public"));
 app.use(express.json());
+
+let users = [
+  { name: "Rose's Fav Boi", email: "rosefavboi", age: 22, id: uuid.v4() },
+  { name: "Jenny's Fav Boi", email: "jennyfavboi", age: 23, id: uuid.v4() },
+];
 
 app.get("/users", (req, res) => {
   res.send(users);
 });
 
 app.post("/users", (req, res) => {
-  // console.log(req.body);
   const newUser = req.body;
-  newUser.id = users.length + 1;
+  newUser.id = uuid.v4();
   users.push(newUser);
   res.send(users);
 });
 
-app.delete("/users", (req, res) => {
-  const userId = req.body;
-  const newUserId = userId.id;
+const isCheckError = (req, res, next) => {
+  const id = req.params.id;
+  const findUser = users.find((user) => user.id === id);
+  if (findUser) {
+    next();
+  } else {
+    res.send({ message: "Error" });
+  }
+};
+
+app.delete("/users/:id", isCheckError, (req, res) => {
+  const userId = req.params.id;
   const filterUser = users.filter((user) => {
-    return user.id !== Number.parseInt(newUserId);
+    return user.id !== userId;
   });
   users = filterUser;
-  console.log(users);
   res.send(users);
 });
 
@@ -72,7 +52,7 @@ app.put("/users", (req, res) => {
   if (checkUserId) {
     checkUserId.name = userId.name;
     checkUserId.email = userId.email;
-    checkUserId.age = Number.parseInt(userId.age);
+    checkUserId.age = userId.age;
     res.send(users);
   }
 });
